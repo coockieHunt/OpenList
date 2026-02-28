@@ -1,0 +1,22 @@
+info:
+  name: new
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8080/list
+  body:
+    type: json
+    data: |-
+      {
+        "Title": "{{$randomWord}}",
+        "Items": []
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

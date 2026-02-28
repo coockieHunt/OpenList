@@ -1,0 +1,23 @@
+info:
+  name: add item
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8080/item/1
+  body:
+    type: json
+    data: |-
+      {
+          "name": "{{$randomWord}}",
+          "quantity": 2,
+          "validated": false
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
