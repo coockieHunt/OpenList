@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Interface</title>
+    <link rel="stylesheet" href="/pico.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/icon.css">
+    
+    <script src="/api/api.js"></script>
+    <script src="/api/appendList.js"></script>
+    <script src="/assets/js/theme.js"></script>
+
+    <script>
+        onload = () => {
+            appendToList('list-container');
+        }
+    </script>
+</head>
+<body>
+    <main class="container">
+        {{ template "header" . }}
+
+        <article>
+            <header style="display: flex; justify-content: space-between; align-items: center;">
+                <hgroup style="margin: 0;">
+                    <h5 style="margin: 0;">Mes Listes</h5>
+                    <small>list de list (list INCEPTION 😂)</small>
+                </hgroup>
+                <hgroup style="margin: 0;">
+                    <button 
+                        class="outline"
+                        data-tooltip="Rafraîchir la liste" 
+                        onclick="appendToList('list-container')"
+                        style="border: none; padding: 0; margin: 0; width: auto; background: transparent;">
+                        <span class="icon icon-reload" style="width: 30px; height: 30px;"></span>
+                    </button>
+                    <a href="/addList" style="color: var(--pico-primary)">créer une liste</a>
+                </hgroup>
+            </header>
+            
+            <div id="list-container" class="list">
+                <p aria-busy="true">Chargement...</p>
+            </div>
+
+            <footer>
+                <small>response time : <span id="response-time">0ms</span></small>
+            </footer>
+        </article>
+
+        {{ template "footer" . }}
+    </main>
+</body>
+</html>

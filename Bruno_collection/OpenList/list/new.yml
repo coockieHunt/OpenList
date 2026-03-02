@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: http://localhost:8080/list
+  url: "{{base_url}}/list"
   body:
     type: json
     data: |-

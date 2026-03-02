@@ -20,11 +20,24 @@ If you're also learning Go, feel free to explore the code   it's intentionally k
 ```bash
 git clone https://github.com/your-user/OpenList.git
 cd OpenList
+cp .env.exemple .env
 go mod tidy
 go run main.go
 ```
 
 Server runs on `http://localhost:8080`
+
+---
+
+## ⚙️ Configuration
+
+After copying `.env.exemple` to `.env`, you can configure:
+
+| Variable | Default | Description |
+|---|---|---|
+| `API_PORT` | `8080` | Port used by the API server |
+| `WEB_PORT` | `4000` | Port used by the web UI server |
+| `API_URL` | `http://localhost:8080/api` | Base URL used by frontend API calls |
 
 ---
 
@@ -124,6 +137,11 @@ curl http://localhost:8080/list
 - [GORM](https://gorm.io/) / SQLite   embedded database
 
 ---
+
+
+## powered by
+- picos css : https://picocss.com/
+- icon : https://tabler.io/icons
 
 ## 📄 License
 

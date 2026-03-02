@@ -4,15 +4,13 @@ info:
   seq: 3
 
 http:
-  method: POST
-  url: http://localhost:8080/item/1
+  method: PUT
+  url: "{{base_url}}/item/1"
   body:
     type: json
     data: |-
       {
-          "name": "{{$randomWord}}",
-          "quantity": 2,
-          "validated": false
+        "id": 3
       }
   auth: inherit
 

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Paramètres - OpenList</title>
+
+    <link rel="stylesheet" href="/pico.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/icon.css">
+    
+    <script src="/api/api.js"></script>
+    <script src="/api/appendList.js"></script>
+    <script src="/assets/js/theme.js"></script>
+
+    <script>
+        onload = () => {
+            const listID = window.location.pathname.split("/").pop();
+            appendToItemList('item-container', listID);
+        }
+
+        const HandelAddItemToList = async (itemName, itemQuantity, listID) => {
+            await newItem(itemName, itemQuantity, listID);
+            appendToItemList('item-container', listID);
+        }
+
+        const HandelDeleteList = async (listID) => {
+            await DeleteList(listID);
+            window.location.href = "/";
+        }
+    </script>
+</head>
+<body>
+    <main class="container" style="display: flex; flex-direction: column; min-height: 100vh; gap: 1rem;">
+        {{ template "header" (dict "PageName" "List") }}
+
+         <div id="item-container" class="list">
+            <p aria-busy="true">Chargement...</p>
+        </div>
+
+        <article>
+            <h3>Ajouter un nouvel Article</h3>
+            <form onsubmit="event.preventDefault(); HandelAddItemToList(this.itemName.value, this.itemQuantity.value, window.location.pathname.split('/').pop())">
+                <input type="text" name="itemName" placeholder="Banane" required>
+                <label>
+                    Quantité :
+                    <input type="range" name="itemQuantity" value="10" oninput="document.getElementById('quantity-value').textContent = this.value" />
+                    <span id="quantity-value">10</span>
+                </label>
+
+                <button type="submit">Ajouter</button>
+            </form>
+            <button onclick="HandelDeleteList(window.location.pathname.split('/').pop())">Supprimer la liste</button>
+
+        </article>
+
+        {{ template "footer" . }}
+    </main>
+
+    
+</body>
+</html>

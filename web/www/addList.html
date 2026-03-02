@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Paramètres - OpenList</title>
+    <link rel="stylesheet" href="/pico.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/icon.css">
+    <script src="/assets/js/theme.js"></script>
+    <script src="/api/api.js"></script>
+
+    <script>
+        const PutNewList = async (name) => {
+            const response = await newList(name);
+            if (response.status === "success") {
+                window.location.href = `/list/${response.data.id}`;
+            } else {
+                alert("Erreur lors de la création de la liste.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <main class="container">
+        {{ template "header" (dict "PageName" "Paramètres") }}
+
+        <form style="margin-top: 2em;" onsubmit="event.preventDefault(); PutNewList(document.getElementById('list-name').value);">
+            <label for="list-name">Nom de la liste :</label>
+            <input type="text" id="list-name" name="list-name" required>
+            <button type="submit">Créer la liste</button>
+        </form>
+
+        {{ template "footer" . }}
+    </main>
+
+    
+</body>
+</html>

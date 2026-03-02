@@ -1,0 +1,43 @@
+.icon {
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    background-color: currentColor; 
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+
+    position: relative; 
+    vertical-align: middle;
+}
+
+
+
+.icon:hover {
+    color: var(--pico-primary-hover);
+    transform: scale(1.10);
+}
+
+.icon-reload {
+  mask-image: url('/assets/icons/reload.svg');
+  -webkit-mask-image: url('/assets/icons/reload.svg');
+}
+
+.icon-brightness-up {
+  mask-image: url('/assets/icons/brightness-up.svg');
+  -webkit-mask-image: url('/assets/icons/brightness-up.svg');
+  cursor: pointer;
+}
+
+.icon-brightness-down {
+  mask-image: url('/assets/icons/brightness-down.svg');
+  -webkit-mask-image: url('/assets/icons/brightness-down.svg');
+  cursor: pointer;
+}
+
+.icon-settings {
+  mask-image: url('/assets/icons/settings.svg');
+  -webkit-mask-image: url('/assets/icons/settings.svg');
+  cursor: pointer;
+}
