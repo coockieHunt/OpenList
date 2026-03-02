@@ -124,8 +124,9 @@ curl http://localhost:8080/list
 
 - [x] CRUD API for lists & items
 - [x] Embedded SQLite database
+- [x] Simple web interface (html/js) 
 - [ ] Share lists with family members
-- [ ] Simple web interface (React / Vue) 
+- [ ] GlowUp ui web interface (html/js) 
 - [ ] Real-time notifications (WebSocket)
 
 ---
@@ -134,10 +135,16 @@ curl http://localhost:8080/list
 
 - [Go](https://go.dev/)   backend language
 - [Gin](https://github.com/gin-gonic/gin)   HTTP framework
-- [GORM](https://gorm.io/) / SQLite   embedded database
+- [GORM](https://gorm.io/)  SQLite   embedded database
 
 ---
 
+## 🚀 Project Status & Contributions
+This project is currently under active development (Work In Progress). We are focusing on building a high-performance, lightweight architecture with Go and Vanilla JS.
+
+Contributions are more than welcome! Pull Requests (PRs) are open for anyone looking to help with code optimization, UI/UX improvements with Pico.css, or general refactoring. Feel free to fork the repo and submit your ideas!
+
+Current Footprint: 23M (build) (Targeting BUILD < THE SMALLEST POSSIBLE)
 
 ## powered by
 - picos css : https://picocss.com/
