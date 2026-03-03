@@ -1,4 +1,10 @@
 *.db
 *.log
 .env
+.db_shm
+.db_wal
+Openlist
+OpenList.db-shm
+OpenList.db-wal
 /tmp/*
+/dist/*

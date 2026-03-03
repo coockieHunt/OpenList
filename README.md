@@ -27,6 +27,27 @@ go run main.go
 
 Server runs on `http://localhost:8080`
 
+### Smallest build
+
+```bash
+make
+```
+
+This build uses:
+- `-tags "netgo osusergo static_build"` (fully static binary, no CGO)
+- `-trimpath`
+- `-ldflags "-s -w"`
+- `CGO_ENABLED=0`
+
+The `compress` step runs automatically after build (if UPX is installed):
+
+```bash
+make build   # build only
+make         # build + UPX compression (ultra-brute + lzma)
+```
+
+> **Note:** UPX must be installed for compression. If not found, only the uncompressed binary is produced.
+
 ---
 
 ## ⚙️ Configuration
@@ -144,7 +165,7 @@ This project is currently under active development (Work In Progress). We are fo
 
 Contributions are more than welcome! Pull Requests (PRs) are open for anyone looking to help with code optimization, UI/UX improvements with Pico.css, or general refactoring. Feel free to fork the repo and submit your ideas!
 
-Current Footprint: 23M (build) (Targeting BUILD < THE SMALLEST POSSIBLE)
+Current Footprint: 6.5M (build) (Targeting BUILD < THE SMALLEST POSSIBLE)
 
 ## powered by
 - picos css : https://picocss.com/

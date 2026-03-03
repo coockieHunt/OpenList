@@ -11,6 +11,7 @@ async function appendToList(domId) {
     });
 
     const htmlContent = `
+        ${list.length === 0 ? '<p style="text-align: center; color: var(--pico-muted-color);">Aucune liste trouvée.</p>' : ''}
         <ul>
             ${list.map(item => `
                 <li>
@@ -39,6 +40,17 @@ async function appendToList(domId) {
         }
     }
 
+    const DeleteItemHandler = async (itemId, listId, domId) => {
+        const response = await DeleteItem(listId, itemId);
+        console.log(response);
+        if (response.status === 'success') {
+            console.log(`Item with ID: ${itemId} deleted successfully`);
+            appendToItemList(domId, listId);
+        } else {
+            console.error(`Failed to delete item with ID: ${itemId}`);
+        }
+    }
+
 
 async function appendToItemList(domId, listId) {
     const container = document.getElementById(domId);
@@ -55,7 +67,10 @@ async function appendToItemList(domId, listId) {
                         style="display: flex; justify-content: space-between; align-items: center;"
                         data-id="${item.id}">
                         <span>${item.name} | ${item.quantity}</span>
-                        <span onclick="ValidateItemHandler(${item.id}, ${listId}, '${domId}')"><input type="checkbox" ${item.validated ? 'checked' : ''} disabled></span>
+                        <span style="display:flex; align-items:center; gap:8px;">
+                            <span onclick="ValidateItemHandler(${item.id}, ${listId}, '${domId}')"><input type="checkbox" ${item.validated ? 'checked' : ''} disabled></span>
+                            <button type="button" class="secondary" style="padding: 0.2rem 0.5rem; margin: 0;" onclick="DeleteItemHandler(${item.id}, ${listId}, '${domId}')">✕</button>
+                        </span>
                     </div>
                 </li>
             `).join('')}

@@ -35,15 +35,32 @@ const getListItems = (listId) => {
 }
 
 const ValidateItem = (listId, itemId) => {
-    url = `${MainUrl}/item/${listId}`;
+    url = `${MainUrl}/item/${listId}/${itemId}`;
 
     console.log(listId, itemId);
     const response = fetch(url, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ id: itemId })
+        }
+    }).then(response => response.json())
+    .then(data => {
+        return data;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+    return response;
+}
+
+const DeleteItem = (listId, itemId) => {
+    url = `${MainUrl}/item/${listId}/${itemId}`;
+
+    const response = fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
     }).then(response => response.json())
     .then(data => {
         return data;

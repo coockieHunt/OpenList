@@ -5,14 +5,18 @@ info:
 
 http:
   method: PUT
-  url: "{{base_url}}/item/1"
+  url: "{{base_url}}/item/{{idList}}/{{idItem}}"
   body:
     type: json
-    data: |-
-      {
-        "id": 3
-      }
+    data: ""
   auth: inherit
+
+runtime:
+  variables:
+    - name: idList
+      value: "1"
+    - name: idItem
+      value: "1"
 
 settings:
   encodeUrl: true

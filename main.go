@@ -35,16 +35,16 @@ func main() {
 
 	//list Routes
 	router.GET("/api/list", routes.GetAllLists)
-	router.GET("/api/list/:id", routes.GetListByID)
+	router.GET("/api/list/:idList", routes.GetListByID)
 
 	// List
 	router.POST("/api/list", routes.NewList)
-	router.DELETE("/api/list/:id", routes.DeleteList)
+	router.DELETE("/api/list/:idList", routes.DeleteList)
 
 	// Item
-	router.POST("/api/item/:id", routes.AddItem)
-	router.DELETE("/api/item/:id", routes.DeleteItem)
-	router.PUT("/api/item/:id", routes.ValidateItemID)
+	router.POST("/api/item/:idList", routes.AddItem)
+	router.PUT("/api/item/:idList/:idItem", routes.ValidateItemID)
+	router.DELETE("/api/item/:idList/:idItem", routes.DeleteItem)
 
 	go func() {
 		log.Println("Api run at :http://localhost:" + os.Getenv("API_PORT"))

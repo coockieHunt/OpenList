@@ -5,11 +5,16 @@ info:
 
 http:
   method: DELETE
-  url: "{{base_url}}/list/2"
+  url: "{{base_url}}/list/{{idList}}"
   body:
     type: json
     data: ""
   auth: inherit
+
+runtime:
+  variables:
+    - name: idList
+      value: "1"
 
 settings:
   encodeUrl: true

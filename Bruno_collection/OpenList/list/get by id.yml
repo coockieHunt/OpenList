@@ -5,8 +5,13 @@ info:
 
 http:
   method: GET
-  url: "{{base_url}}/list/1"
+  url: "{{base_url}}/list/{{idList}}"
   auth: inherit
+
+runtime:
+  variables:
+    - name: idList
+      value: "1"
 
 settings:
   encodeUrl: true

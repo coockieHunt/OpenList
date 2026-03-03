@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: "{{base_url}}/item/1"
+  url: "{{base_url}}/item/{{idList}}"
   body:
     type: json
     data: |-
@@ -15,6 +15,11 @@ http:
           "validated": false
       }
   auth: inherit
+
+runtime:
+  variables:
+    - name: idList
+      value: "1"
 
 settings:
   encodeUrl: true

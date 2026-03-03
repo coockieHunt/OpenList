@@ -7,101 +7,82 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AddItem: Adds a new item to a specific list
 func AddItem(c *gin.Context) {
 	var item sqlite.Item
-	listStr := c.Param("id")
-
-	listID, err := strconv.ParseUint(listStr, 10, 32)
-	if err != nil {
-		SendResponse(c, "error", "ID invalide", nil)
+	listID, err := strconv.Atoi(c.Param("idList"))
+	if err != nil || listID <= 0 {
+		SendResponse(c, "error", "invalid list ID", nil)
 		return
 	}
 
 	if err := c.ShouldBindJSON(&item); err != nil {
-		println("Erreur Binding JSON:", err.Error())
-		SendResponse(c, "error", "Payload invalide: "+err.Error(), nil)
+		println("JSON Binding Error:", err.Error())
+		SendResponse(c, "error", "invalid payload", nil)
 		return
 	}
 
 	item.ListID = uint(listID)
 
 	if err := sqlite.DB.Create(&item).Error; err != nil {
-		println("Erreur GORM:", err.Error())
-		SendResponse(c, "error", "Erreur DB: "+err.Error(), nil)
+		println("GORM Error:", err.Error())
+		SendResponse(c, "error", "database error", nil)
 		return
 	}
 
-	SendResponse(c, "success", "Item ajouté", item)
+	SendResponse(c, "success", "item added successfully", item)
 }
 
+// DeleteItem: Deletes an item by ID from a specific list
 func DeleteItem(c *gin.Context) {
-	itemStr := c.Param("id")
-	itemID, err := strconv.ParseUint(itemStr, 10, 32)
-	if err != nil {
-		SendResponse(c, "error", "id invalid", nil)
+	listID, _ := strconv.Atoi(c.Param("idList"))
+	itemID, err := strconv.Atoi(c.Param("idItem"))
+
+	if err != nil || listID <= 0 || itemID <= 0 {
+		SendResponse(c, "error", "invalid IDs", nil)
 		return
 	}
 
-	if err := sqlite.DB.Delete(&sqlite.Item{}, itemID).Error; err != nil {
-		SendResponse(c, "error", "error delete item db", nil)
+	result := sqlite.DB.Where("id = ? AND list_id = ?", itemID, listID).Delete(&sqlite.Item{})
+
+	if result.Error != nil {
+		println("GORM Error:", result.Error.Error())
+		SendResponse(c, "error", "database error", nil)
 		return
 	}
 
-	SendResponse(c, "success", "Item deleted successfully", nil)
+	if result.RowsAffected == 0 {
+		SendResponse(c, "error", "item not found in this list", nil)
+		return
+	}
+
+	SendResponse(c, "success", "item deleted successfully", nil)
 }
 
+// ValidateItemID: Toggles the validated status of an item by ID in a specific list
 func ValidateItemID(c *gin.Context) {
-	itemStr := c.Param("id")
-	listID, err := strconv.ParseUint(itemStr, 10, 32)
-	if err != nil {
-		SendResponse(c, "error", "id invalid", nil)
+	listID, _ := strconv.Atoi(c.Param("idList"))
+	itemID, err := strconv.Atoi(c.Param("idItem"))
+
+	if err != nil || listID <= 0 || itemID <= 0 {
+		SendResponse(c, "error", "invalid IDs", nil)
 		return
 	}
-
-	type validatePayload struct {
-		ID uint `json:"id"`
-	}
-
-	var payload validatePayload
-	if c.Request.ContentLength > 0 {
-		if err := c.ShouldBindJSON(&payload); err != nil {
-			SendResponse(c, "error", "Payload invalide", nil)
-			return
-		}
-	}
-
-	itemIDStr := c.Query("item_id")
 
 	var item sqlite.Item
-	if payload.ID > 0 {
-		if err := sqlite.DB.Where("id = ? AND list_id = ?", payload.ID, uint(listID)).First(&item).Error; err != nil {
-			SendResponse(c, "error", "Item not found", nil)
-			return
-		}
-	} else if itemIDStr != "" {
-		itemID, parseErr := strconv.ParseUint(itemIDStr, 10, 32)
-		if parseErr != nil {
-			SendResponse(c, "error", "item_id invalid", nil)
-			return
-		}
-
-		if err := sqlite.DB.Where("id = ? AND list_id = ?", uint(itemID), uint(listID)).First(&item).Error; err != nil {
-			SendResponse(c, "error", "Item not found", nil)
-			return
-		}
-	} else {
-		if err := sqlite.DB.Where("list_id = ?", uint(listID)).Order("id desc").First(&item).Error; err != nil {
-			SendResponse(c, "error", "Item not found", nil)
-			return
-		}
-	}
-
-	item.Validated = !item.Validated
-
-	if err := sqlite.DB.Save(&item).Error; err != nil {
-		SendResponse(c, "error", "error update item db", nil)
+	if err := sqlite.DB.Select("id", "validated").Where("id = ? AND list_id = ?", itemID, listID).First(&item).Error; err != nil {
+		SendResponse(c, "error", "item not found in this list", nil)
 		return
 	}
 
-	SendResponse(c, "success", "Item updated successfully", item)
+	newStatus := !item.Validated
+
+	if err := sqlite.DB.Model(&item).UpdateColumn("validated", newStatus).Error; err != nil {
+		println("GORM Error:", err.Error())
+		SendResponse(c, "error", "database update failed", nil)
+		return
+	}
+
+	item.Validated = newStatus
+	SendResponse(c, "success", "item toggled successfully", item)
 }
