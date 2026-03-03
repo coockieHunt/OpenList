@@ -80,7 +80,7 @@ OpenList/
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | int | Unique identifier |
-| `name` | string | List name |
+| `title` | string | List title |
 
 ### Item
 | Field | Type | Description |
@@ -88,7 +88,8 @@ OpenList/
 | `id` | int | Unique identifier |
 | `list_id` | int | Parent list |
 | `name` | string | Item name |
-| `checked` | bool | Checked or not |
+| `quantity` | int | Item quantity |
+| `validated` | bool | Checked or not |
 
 ---
 
@@ -98,18 +99,18 @@ OpenList/
 
 | Method | Route | Description |
 |--------|-------|-------------|
-| `GET` | `/list` | Get all lists |
-| `GET` | `/list/:id` | Get a list by ID |
-| `POST` | `/list` | Create a new list |
-| `DELETE` | `/list/:id` | Delete a list |
+| `GET` | `/api/list` | Get all lists |
+| `GET` | `/api/list/:idList` | Get a list by ID |
+| `POST` | `/api/list` | Create a new list |
+| `DELETE` | `/api/list/:idList` | Delete a list |
 
 ### Items
 
 | Method | Route | Description |
 |--------|-------|-------------|
-| `POST` | `/item/:id` | Add an item to a list |
-| `DELETE` | `/item/:id` | Delete an item |
-| `PUT` | `/item/:id` | Check / uncheck an item |
+| `POST` | `/api/item/:idList` | Add an item to a list |
+| `DELETE` | `/api/item/:idList/:idItem` | Delete an item |
+| `PUT` | `/api/item/:idList/:idItem` | Check / uncheck an item |
 
 ---
 
@@ -117,26 +118,26 @@ OpenList/
 
 **Create a list**
 ```bash
-curl -X POST http://localhost:8080/list \
+curl -X POST http://localhost:8080/api/list \
   -H "Content-Type: application/json" \
-  -d '{"name": "Weekend groceries"}'
+  -d '{"title": "Weekend groceries"}'
 ```
 
 **Add an item**
 ```bash
-curl -X POST http://localhost:8080/item/1 \
+curl -X POST http://localhost:8080/api/item/1 \
   -H "Content-Type: application/json" \
-  -d '{"name": "Milk"}'
+  -d '{"name": "Milk", "quantity": 1, "validated": false}'
 ```
 
 **Check an item**
 ```bash
-curl -X PUT http://localhost:8080/item/1
+curl -X PUT http://localhost:8080/api/item/1/2
 ```
 
 **Get all lists**
 ```bash
-curl http://localhost:8080/list
+curl http://localhost:8080/api/list
 ```
 
 ---
