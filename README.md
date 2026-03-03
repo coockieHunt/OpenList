@@ -11,8 +11,6 @@ OpenList is a **learning project**. The main goal is to explore and get comforta
 
 Go intrigued me because of its simplicity, its performance, and its opinionated approach to writing clean code. Rather than following tutorials, I decided to learn by doing: building a small REST API from scratch with a real use case. This project covers core Go concepts like structs, interfaces, packages, error handling, and working with external libraries.
 
-If you're also learning Go, feel free to explore the code   it's intentionally kept simple and readable.
-
 ---
 
 ## 🚀 Getting started
@@ -26,6 +24,23 @@ go run main.go
 ```
 
 Server runs on `http://localhost:8080`
+
+## 🧱 Build commands
+
+**Run in development**
+```bash
+go run main.go
+```
+
+**Build only**
+```bash
+make build
+```
+
+**Build + compress (UPX if available)**
+```bash
+make
+```
 
 ### Smallest build
 
@@ -66,9 +81,17 @@ After copying `.env.exemple` to `.env`, you can configure:
 
 ```
 OpenList/
-├── main.go          # Entry point & routes
-├── routes/          # HTTP handlers
-├── sqlite/          # Models & database init
+├── main.go                 # API + Web server entry point
+├── Go/
+│   ├── routes/             # HTTP handlers
+│   ├── sqlite/             # Models & database init
+│   └── token/              # Token utilities
+├── web/
+│   ├── server.go           # Web UI server
+│   └── www/                # HTML, JS, CSS assets
+├── Bruno_collection/       # API test collection
+├── Makefile
+├── go.mod
 └── README.md
 ```
 
@@ -116,6 +139,16 @@ OpenList/
 
 ## 🧪 Usage examples
 
+**Get all lists**
+```bash
+curl http://localhost:8080/api/list
+```
+
+**Get one list by ID**
+```bash
+curl http://localhost:8080/api/list/1
+```
+
 **Create a list**
 ```bash
 curl -X POST http://localhost:8080/api/list \
@@ -135,9 +168,14 @@ curl -X POST http://localhost:8080/api/item/1 \
 curl -X PUT http://localhost:8080/api/item/1/2
 ```
 
-**Get all lists**
+**Delete an item**
 ```bash
-curl http://localhost:8080/api/list
+curl -X DELETE http://localhost:8080/api/item/1/2
+```
+
+**Delete a list**
+```bash
+curl -X DELETE http://localhost:8080/api/list/1
 ```
 
 ---
