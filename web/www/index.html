@@ -12,8 +12,14 @@
     <script src="/assets/js/theme.js"></script>
 
     <script>
-        onload = () => {
-            appendToList('list-container');
+        const refreshList = async () => {
+            const response = await appendToList('list-container');
+            document.getElementById('response-time').textContent = response.time;
+            document.getElementById('response-count').textContent = response.count;
+        };
+
+        onload = async () => {
+            refreshList();
         }
     </script>
 </head>
@@ -25,13 +31,13 @@
             <header style="display: flex; justify-content: space-between; align-items: center;">
                 <hgroup style="margin: 0;">
                     <h5 style="margin: 0;">Mes Listes</h5>
-                    <small>list de list (list INCEPTION 😂)</small>
+                    <small><span id="response-count">0</span> Liste</small>
                 </hgroup>
                 <hgroup style="margin: 0;">
                     <button 
                         class="outline"
                         data-tooltip="Rafraîchir la liste" 
-                        onclick="appendToList('list-container')"
+                        onclick="refreshList()"
                         style="border: none; padding: 0; margin: 0; width: auto; background: transparent;">
                         <span class="icon icon-reload" style="width: 30px; height: 30px;"></span>
                     </button>
@@ -44,7 +50,7 @@
             </div>
 
             <footer>
-                <small>response time : <span id="response-time">0ms</span></small>
+                <small>Response: <span id="response-time">0ms</span></small>
             </footer>
         </article>
 
