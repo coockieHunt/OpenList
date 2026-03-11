@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Paramètres - OpenList</title>
+    <title>Nouvelle Liste - OpenList</title>
     <link rel="stylesheet" href="/pico.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/icon.css">
@@ -23,7 +23,7 @@
 </head>
 <body>
     <main class="container">
-        {{ template "header" (dict "PageName" "Paramètres") }}
+        {{ template "header" (dict "PageName" "Nouvelle Liste") }}
 
         <form style="margin-top: 2em;" onsubmit="event.preventDefault(); PutNewList(document.getElementById('list-name').value);">
             <label for="list-name">Nom de la liste :</label>
