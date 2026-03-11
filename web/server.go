@@ -35,6 +35,7 @@ func (a *WebServer) RunWebServer() {
 
 	router.Static("/assets", "./web/www/assets")
 	router.Static("/api", "./web/www/api")
+	router.Static("/append", "./web/www/append")
 	router.StaticFile("/pico.min.css", "./web/www/pico.min.css")
 
 	router.LoadHTMLGlob("web/www/*.html")

@@ -8,12 +8,12 @@
     <link rel="stylesheet" href="/assets/css/icon.css">
     
     <script src="/api/api.js"></script>
-    <script src="/api/appendList.js"></script>
+    <script src="/append/ViewAll.js"></script>
     <script src="/assets/js/theme.js"></script>
 
     <script>
         const refreshList = async () => {
-            const response = await appendToList('list-container');
+            const response = await appendAllToList('list-container');
             document.getElementById('response-time').textContent = response.time;
             document.getElementById('response-count').textContent = response.count;
         };

@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="/assets/css/icon.css">
     
     <script src="/api/api.js"></script>
-    <script src="/api/appendList.js"></script>
+    <script src="/assets/js/modal.js"></script>
+    <script src="/append/ViewList.js"></script>
     <script src="/assets/js/theme.js"></script>
 
     <script>
@@ -24,16 +25,18 @@
             appendToItemList('item-container', listID);
         }
 
-        const HandelDeleteList = async (listID) => {
-            await DeleteList(listID);
-            window.location.href = "/";
+        const HandelDeleteList = (listID) => {
+            OpenConfirmModal('Supprimer cette liste ?', 'Tous les articles de cette liste seront egalement supprimes.', async () => {
+                await DeleteList(listID);
+                window.location.href = "/";
+            });
         }
     </script>
 </head>
 <body>
-    <main class="container" style="display: flex; flex-direction: column; min-height: 100vh; gap: 1rem;">
-        {{ template "header" (dict "PageName" "Liste") }}
-
+    <main class="container">
+        {{ template "header" . }}
+        
          <div id="item-container" class="list">
             <p aria-busy="true">Chargement...</p>
         </div>
