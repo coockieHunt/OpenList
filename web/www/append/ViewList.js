@@ -34,10 +34,10 @@ async function appendToItemList(domId, listId) {
             ${items.length === 0 ? '<p style="text-align: center; color: var(--pico-muted-color);">Aucun item dans cette liste.</p>' : ''}
             ${items.map(item => `
                 <li>
-                    <div class="list-item" style="display: flex; justify-content: space-between; align-items: center;" data-id="${item.id}">
+                    <div class="list-item" style="display: flex; justify-content: space-between; align-items: center;" data-id="${item.id}" onclick="ValidateItemHandler(${item.id}, ${listId}, '${domId}')">
                         <span>${item.name} | ${item.quantity}</span>
                         <span style="display:flex; align-items:center; gap:8px;">
-                            <span onclick="ValidateItemHandler(${item.id}, ${listId}, '${domId}')">
+                            <span >
                                 <input type="checkbox" ${item.validated ? 'checked' : ''} disabled>
                             </span>
                             <button type="button" 
