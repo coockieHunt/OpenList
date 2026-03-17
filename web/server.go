@@ -40,18 +40,21 @@ func (a *WebServer) RunWebServer() {
 
 	router.LoadHTMLGlob("web/www/*.html")
 
+	// home
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "OpenList",
 		})
 	})
 
+	//settings
 	router.GET("/settings", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "settings.html", gin.H{
 			"PageName": "Settings",
 		})
 	})
 
+	//list
 	router.GET("/list/:id", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "list.html", gin.H{
 			"PageName": "List",
@@ -62,6 +65,13 @@ func (a *WebServer) RunWebServer() {
 	router.GET("/addList", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "addList.html", gin.H{
 			"PageName": "Add List",
+		})
+	})
+
+	//user
+	router.GET("/users", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "user.html", gin.H{
+			"PageName": "User Management",
 		})
 	})
 

@@ -1,43 +1,61 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Liste - OpenList</title>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Liste - OpenList</title>
+		<script src="/api/api.js"></script>
+		<script src="/assets/js/auth-guard.js"></script>
+		<link rel="stylesheet" href="/pico.min.css" />
+		<link rel="stylesheet" href="/assets/css/style.css" />
+		<link rel="stylesheet" href="/assets/css/icon.css" />
 
-    <link rel="stylesheet" href="/pico.min.css">
-    <link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/assets/css/icon.css">
-    
-    <script src="/api/api.js"></script>
-    <script src="/assets/js/modal.js"></script>
-    <script src="/append/ViewList.js"></script>
-    <script src="/assets/js/theme.js"></script>
+		<script src="/api/api.js"></script>
+		<script src="/assets/js/modal.js"></script>
+		<script src="/append/ViewList.js"></script>
+		<script src="/assets/js/theme.js"></script>
 
-    <script>
-        onload = () => {
-            const listID = window.location.pathname.split("/").pop();
-            appendToItemList('item-container', listID);
-        }
+		<script>
+			onload = () => {
+				const listID = window.location.pathname.split("/").pop();
+				appendToItemList("item-container", listID);
+			};
 
-        const HandelAddItemToList = async (itemName, itemQuantity, listID) => {
-            await newItem(itemName, itemQuantity, listID);
-            appendToItemList('item-container', listID);
-        }
+			const HandelAddItemToList = async (
+				itemName,
+				itemQuantity,
+				listID,
+			) => {
+				await newItem(itemName, itemQuantity, listID);
+				appendToItemList("item-container", listID);
+			};
 
-        const HandelDeleteList = (listID) => {
-            OpenConfirmModal('Supprimer cette liste ?', 'Tous les articles de cette liste seront egalement supprimes.', async () => {
-                await DeleteList(listID);
-                window.location.href = "/";
-            },
-            [
-                { label: 'Annuler', class: 'secondary', action: 'cancel' },
-                { label: 'Supprimer', class: 'contrast', action: 'confirm', style: 'background-color: var(--pico-del-color);' }
-            ]);
-        }
+			const HandelDeleteList = (listID) => {
+				OpenConfirmModal(
+					"Supprimer cette liste ?",
+					"Tous les articles de cette liste seront egalement supprimes.",
+					async () => {
+						await DeleteList(listID);
+						window.location.href = "/";
+					},
+					[
+						{
+							label: "Annuler",
+							class: "secondary",
+							action: "cancel",
+						},
+						{
+							label: "Supprimer",
+							class: "contrast",
+							action: "confirm",
+							style: "background-color: var(--pico-del-color);",
+						},
+					],
+				);
+			};
 
-        const OpenModalAddItem = () => {
-            const modalContent = `
+			const OpenModalAddItem = () => {
+				const modalContent = `
                 <form id="add-item-form">
                     <input type="text" name="itemName" placeholder="Banane" required>
                     <label>Quantité :</label>
@@ -56,33 +74,99 @@
                 </form>
             `;
 
-            OpenConfirmModal('Ajouter un article', modalContent, () => {
-                const form = document.getElementById('add-item-form');
-                if (!form.reportValidity()) return Promise.reject();
-                const listID = window.location.pathname.split("/").pop();
-                HandelAddItemToList(form.itemName.value, form.itemQuantity.value, listID);
-            },
-            [
-                { label: 'Annuler', class: 'secondary', action: 'cancel' },
-                { label: 'Ajouter', class: 'contrast', action: 'confirm', style: 'background-color: var(--pico-ins-color);' }
-            ]);
-        }
-    </script>
-</head>
-<body>
-    <main class="container">
-        {{ template "header" . }}
-        
-        <div id="item-container" class="list">
-            <p aria-busy="true">Chargement...</p>
-        </div>
+				OpenConfirmModal(
+					"Ajouter un article",
+					modalContent,
+					() => {
+						const form = document.getElementById("add-item-form");
+						if (!form.reportValidity()) return Promise.reject();
+						const listID = window.location.pathname
+							.split("/")
+							.pop();
+						HandelAddItemToList(
+							form.itemName.value,
+							form.itemQuantity.value,
+							listID,
+						);
+					},
+					[
+						{
+							label: "Annuler",
+							class: "secondary",
+							action: "cancel",
+						},
+						{
+							label: "Ajouter",
+							class: "contrast",
+							action: "confirm",
+							style: "background-color: var(--pico-ins-color);",
+						},
+					],
+				);
+			};
 
-        <article>
-            <button type="button" onclick="OpenModalAddItem()">➕ Ajouter</button>
-            <button type="button" onclick="HandelDeleteList(window.location.pathname.split('/').pop())">🗑️ Supprimer la liste</button>
-        </article>
+            const HandelShareList = (listID) => {
+                OpenConfirmModal(
+                    "Partager cette liste ?",
+                    "Générez un lien de partage pour cette liste. Toute personne disposant du lien pourra voir et modifier la liste.",
+                    async () => {
+                        const response = await ShareList(listID);
+                        if (response.status === "success") {
+                            const shareLink = `${window.location.origin}/share/${response.data.token}`;
+                            navigator.clipboard.writeText(shareLink);
+                            alert("Lien de partage copié dans le presse-papiers !");
+                        } else {
+                            alert("Erreur lors de la génération du lien de partage.");
+                        }
+                    },
+                    [
+                        {
+                            label: "Annuler",
+                            class: "secondary",
+                            action: "cancel",
+                        },
+                        {
+                            label: "Partager",
+                            class: "contrast",
+                            style: "background-color: var(--pico-primary);",
+                            action: "confirm",
+                        },
+                    ],
+                );
+            };
+		</script>
+	</head>
+	<body>
+		<main class="container">
+			{{ template "header" . }}
 
-        {{ template "footer" . }}
-    </main>
-</body>
+			<div id="item-container" class="list">
+				<p aria-busy="true">Chargement...</p>
+			</div>
+
+			<article>
+                <div role="group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button type="button" onclick="OpenModalAddItem()">
+                        ➕ Ajouter
+                    </button>
+                    <button
+                        type="button"
+                        class="secondary"
+                        onclick="HandelDeleteList(window.location.pathname.split('/').pop())"
+                    >
+                        🗑️ Supprimer la liste
+                    </button>
+                    <button
+                        type="button"
+                        class="secondary outline"
+                        onclick="HandelShareList()"
+                    >
+                        📫 Partager la liste
+                    </button>
+                </div>
+			</article>
+
+			{{ template "footer" . }}
+		</main>
+	</body>
 </html>

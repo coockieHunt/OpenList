@@ -98,7 +98,7 @@ go run main.go
 | Framework | Gin (Lightweight routing)                         |
 | Database  | SQLite with WAL mode (Zero-config, high-performance) |
 | Frontend  | Pico.css (Minimalist CSS) & Vanilla JS            |
-| Icons     | Tabler Icons (Only 3 custom SVGs)                 |
+| Icons     | Tabler Icons (Only < 5 custom SVGs)                 |
 
 ---
 

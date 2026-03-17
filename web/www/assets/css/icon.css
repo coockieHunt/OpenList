@@ -41,3 +41,9 @@
   -webkit-mask-image: url('/assets/icons/settings.svg');
   cursor: pointer;
 }
+
+.icon-users {
+  mask-image: url('/assets/icons/users.svg');
+  -webkit-mask-image: url('/assets/icons/users.svg');
+  cursor: pointer;
+}

@@ -5,9 +5,12 @@
 {{ define "header" }}
 <nav>
     <ul>
-        <li><h1><a href="/">OpenList</a></h1></li>
+        <li>
+            <a href="/" style="font-size: 1.2rem; font-weight: bold; margin: 0;">OpenList</a>
+        </li>
         {{ if .PageName }}
-            <h2><span style="opacity: 0.5; margin: 0 10px;"> > </span>{{ .PageName }}</h2>
+            <span style="opacity: 0.5; margin: 0 10px; font-size: 1rem;"> > </span>
+            <span style="font-size: 1rem; font-weight: 600;">{{ .PageName }}</span>
         {{ end }}
     </ul>
     <ul>
@@ -17,6 +20,11 @@
         <li>
             <a href="/settings">
                 <span class="icon icon-settings" style="width: 30px; height: 30px;"></span> 
+            </a>
+        </li>
+        <li>
+            <a href="/users">
+                <span class="icon icon-users" style="width: 30px; height: 30px;"></span> 
             </a>
         </li>
     </ul>
