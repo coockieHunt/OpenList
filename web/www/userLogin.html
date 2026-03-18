@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr" data-theme="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Paramètres - OpenList</title>
+        <link rel="stylesheet" href="/pico.min.css" />
+        <link rel="stylesheet" href="/assets/css/style.css" />
+        <link rel="stylesheet" href="/assets/css/icon.css" />
+        <script src="/assets/js/theme.js"></script>
+
+        <script>
+            onload = () => {
+                const params = new URLSearchParams(window.location.search);
+                const token = params.get("token");
+
+                if (token) {
+                    document.querySelector('input[name="token"]').value = token;
+                }
+            }
+
+
+            const GenerateToken = async () => {
+                const response = await fetch('/api/generate-token', {
+                    method: 'POST',
+                })
+                const data = await response.json()
+                if (response.ok) {
+                    alert(`Token generated: ${data.token}`)
+                } else {
+                    alert(`Error: ${data.error}`)
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <main class="container">
+            {{ template "header" }}
+            <form>
+                <fieldset>
+                    <label>
+                        Token
+                        <input
+                            name="token"
+                            placeholder="Token"
+                            autocomplete="off"
+                        />
+                        <small id="token-hint">
+                            Le token vous est fourni par un administrateur pour créer ou modifier votre compte.
+                        </small>
+                    </label>
+                    <label>
+                        Nom d'utilisateur
+                        <input
+                            type="text"
+                            name="username"
+                            placeholder="Nom d'utilisateur"
+                            autocomplete="username"
+                        />
+                        <small id="username-hint">
+                            Juste a titre indicatif, il ne sera pas partagé.
+                        </small>
+                    </label>
+                    <label>
+                        Mot de passe
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Mot de passe"
+                            autocomplete="current-password"
+                        />
+                    </label>
+                </fieldset>
+
+                <input type="submit" value="Se connecter" />
+            </form>
+
+            {{ template "footer" . }}
+        </main>
+    </body>
+</html>

@@ -75,6 +75,12 @@ func (a *WebServer) RunWebServer() {
 		})
 	})
 
+	router.GET("/login", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "userLogin.html", gin.H{
+			"PageName": "Login",
+		})
+	})
+
 	addr := fmt.Sprintf(":%s", a.Port)
 	log.Printf("Starting Web UI on %s", addr)
 	log.Fatal(router.Run(addr))

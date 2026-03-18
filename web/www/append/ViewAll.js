@@ -21,7 +21,19 @@ async function appendAllToList(domId) {
                 <li>
                     <div class="list-item" style="display: flex; justify-content: space-between; align-items: center;" data-id="${item.id}">
                         <span>${item.title}</span>
-                        <span class="item-count">${item.items ? item.items.length : 0}</span>
+                        <div style="display:flex; flex-direction: row; gap:8px;">
+                            <span class="item-count">${item.items ? item.items.length : 0}</span>
+                                <button type="button" 
+                                    class="secondary" 
+                                    style="padding: 0.2rem 0.5rem; 
+                                    margin: 0; 
+                                    background-color: var(--pico-primary-color);" 
+                                >
+                                    📫
+                                </button>
+                        </div>
+
+                       
                     </div>
                 </li>
             `).join('')}
