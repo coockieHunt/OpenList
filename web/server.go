@@ -3,25 +3,36 @@ package web
 import (
 	auth "OpenList/Go/service/auth"
 	"OpenList/Go/service/sqlite"
+	"embed"
 	"fmt"
 	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
+//go:embed www/static www/templates
+var webFiles embed.FS
+
 type WebServer struct {
 	Port string
+}
+
+func mustSub(f embed.FS, dir string) fs.FS {
+	sub, err := fs.Sub(f, dir)
+	if err != nil {
+		log.Fatalf("embed sub error: %v", err)
+	}
+	return sub
 }
 
 func (a *WebServer) render(c *gin.Context, templateName string, data gin.H) {
 	pageID := strings.TrimSuffix(templateName, ".html")
 	data["PageID"] = pageID
-
 	data["ApiURL"] = os.Getenv("API_URL")
 	data["WebURL"] = os.Getenv("WEB_URL")
 	data["TokenExpirationHours"] = os.Getenv("TOKEN_EXPIRATION_HOURS")
@@ -32,7 +43,7 @@ func (a *WebServer) render(c *gin.Context, templateName string, data gin.H) {
 func (a *WebServer) RunWebServer() {
 	router := gin.Default()
 
-	router.SetFuncMap(template.FuncMap{
+	funcMap := template.FuncMap{
 		"dict": func(values ...interface{}) (map[string]interface{}, error) {
 			if len(values)%2 != 0 {
 				return nil, fmt.Errorf("invalid dict call")
@@ -48,31 +59,31 @@ func (a *WebServer) RunWebServer() {
 			return dict, nil
 		},
 		"fileExists": func(path string) bool {
-			_, err := os.Stat(filepath.Join("web/www/static", path))
+			_, err := webFiles.Open("www/static/" + path)
 			return err == nil
 		},
-	})
+	}
 
-	router.Static("/assets", "./web/www/static/assets")
-	router.Static("/core", "./web/www/static/core")
-	router.Static("/components", "./web/www/static/components")
-	router.Static("/js", "./web/www/static/assets/js")
-	router.Static("/pages", "./web/www/static/pages")
-	router.StaticFile("/pico.min.css", "./web/www/static/assets/css/pico.min.css")
+	router.SetFuncMap(funcMap)
 
-	router.LoadHTMLGlob("web/www/templates/*.html")
+	tmpl := template.Must(template.New("").Funcs(funcMap).ParseFS(webFiles, "www/templates/*.html"))
+	router.SetHTMLTemplate(tmpl)
+
+	router.StaticFS("/assets", http.FS(mustSub(webFiles, "www/static/assets")))
+	router.StaticFS("/core", http.FS(mustSub(webFiles, "www/static/core")))
+	router.StaticFS("/components", http.FS(mustSub(webFiles, "www/static/components")))
+	router.StaticFS("/pages", http.FS(mustSub(webFiles, "www/static/pages")))
+	router.StaticFileFS("/pico.min.css", "assets/css/pico.min.css", http.FS(mustSub(webFiles, "www/static")))
 
 	readSessionUser := func(c *gin.Context) (*sqlite.User, bool) {
 		token, err := c.Cookie("openlist_session")
 		if err != nil || token == "" {
 			return nil, false
 		}
-
 		user, err := auth.ValidateSession(token)
 		if err != nil {
 			return nil, false
 		}
-
 		return user, true
 	}
 
@@ -83,13 +94,11 @@ func (a *WebServer) RunWebServer() {
 			c.Abort()
 			return
 		}
-
 		if user.FirstLogin && c.Request.URL.Path != "/change-password" {
 			c.Redirect(http.StatusFound, "/change-password")
 			c.Abort()
 			return
 		}
-
 		c.Set("webUser", user)
 		c.Next()
 	}
@@ -103,7 +112,6 @@ func (a *WebServer) RunWebServer() {
 			}
 			return
 		}
-
 		a.render(c, "login.html", gin.H{"PageName": "Connexion"})
 	})
 
@@ -115,28 +123,19 @@ func (a *WebServer) RunWebServer() {
 		})
 
 		protected.GET("/", func(c *gin.Context) {
-			a.render(c, "index.html", gin.H{
-				"PageName": "Accueil",
-			})
+			a.render(c, "index.html", gin.H{"PageName": "Accueil"})
 		})
 
 		protected.GET("/settings", func(c *gin.Context) {
-			a.render(c, "settings.html", gin.H{
-				"PageName": "Paramètres",
-			})
+			a.render(c, "settings.html", gin.H{"PageName": "Paramètres"})
 		})
 
 		protected.GET("/list/:id", func(c *gin.Context) {
-			a.render(c, "list.html", gin.H{
-				"PageName": "Liste",
-				"ListID":   c.Param("id"),
-			})
+			a.render(c, "list.html", gin.H{"PageName": "Liste", "ListID": c.Param("id")})
 		})
 
 		protected.GET("/addList", func(c *gin.Context) {
-			a.render(c, "addList.html", gin.H{
-				"PageName": "Ajouter une liste",
-			})
+			a.render(c, "addList.html", gin.H{"PageName": "Ajouter une liste"})
 		})
 	}
 
