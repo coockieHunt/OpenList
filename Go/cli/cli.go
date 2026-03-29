@@ -1,10 +1,11 @@
 package cli
 
 import (
-	"OpenList/Go/auth"
+	auth "OpenList/Go/service/auth"
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 var CLI_COLOR = struct {
@@ -15,6 +16,7 @@ var CLI_COLOR = struct {
 	Yellow    string
 	BlueUnder string
 	Gray      string
+	Red       string
 }{
 	Reset:     "\033[0m",
 	Bold:      "\033[1m",
@@ -23,6 +25,7 @@ var CLI_COLOR = struct {
 	Yellow:    "\033[33m",
 	BlueUnder: "\033[4;34m",
 	Gray:      "\033[90m",
+	Red:       "\033[31m",
 }
 
 func HandleCLI() bool {
@@ -30,43 +33,54 @@ func HandleCLI() bool {
 	reader := bufio.NewReader(os.Stdin)
 
 	switch cmd {
-	case "genAdminToken":
-		fmt.Print("\n")
-		fmt.Printf("%s%s┌──────────────────────────────────────────────────────────┐%s\n", CLI_COLOR.Bold, CLI_COLOR.Cyan, CLI_COLOR.Reset)
-		fmt.Printf("%s%s│                OPENLIST ADMIN GENERATOR                  │%s\n", CLI_COLOR.Bold, CLI_COLOR.Cyan, CLI_COLOR.Reset)
-		fmt.Printf("%s%s└──────────────────────────────────────────────────────────┘%s\n", CLI_COLOR.Bold, CLI_COLOR.Cyan, CLI_COLOR.Reset)
-		webURL := os.Getenv("WEB_URL")
-		token, err := auth.GenerateAuthToken(0, true)
-		if err != nil {
-			fmt.Printf("Error generating auth token: %v\n", err)
+	case "setPassword":
+		newPassword := ""
+		if len(os.Args) >= 3 {
+			newPassword = strings.TrimSpace(os.Args[2])
+			if err := auth.SetSingleUserPassword(newPassword); err != nil {
+				fmt.Printf("%s✗ Error: %v%s\n", CLI_COLOR.Red, err, CLI_COLOR.Reset)
+				return false
+			}
+			fmt.Printf("%s%s✓ Password updated successfully.%s\n", CLI_COLOR.Bold, CLI_COLOR.Green, CLI_COLOR.Reset)
 			return false
 		}
 
-		var fullURL string
-		if webURL != "" {
-			fullURL = webURL + "/login?token=" + token
-		} else {
-			fullURL = "http://localhost:" + os.Getenv("WEB_PORT") + "/login?token=" + token
+		fmt.Printf("\n%s%s── Change Password ──%s\n\n", CLI_COLOR.Bold, CLI_COLOR.Cyan, CLI_COLOR.Reset)
+
+		fmt.Printf("%s  New password%s (min 8 chars): \033[8m", CLI_COLOR.Cyan, CLI_COLOR.Reset)
+		line1, _ := reader.ReadString('\n')
+		fmt.Print("\033[0m\n")
+		newPassword = strings.TrimSpace(line1)
+
+		fmt.Printf("%s  Confirm password%s: \033[8m", CLI_COLOR.Cyan, CLI_COLOR.Reset)
+		line2, _ := reader.ReadString('\n')
+		fmt.Print("\033[0m\n")
+		confirm := strings.TrimSpace(line2)
+
+		if newPassword != confirm {
+			fmt.Printf("\n%s%s✗ Passwords do not match.%s\n\n", CLI_COLOR.Bold, CLI_COLOR.Red, CLI_COLOR.Reset)
+			return false
 		}
-		fmt.Printf("\n%s%sToken URL:%s %s\n", CLI_COLOR.Bold, CLI_COLOR.Cyan, CLI_COLOR.Reset, token)
-		fmt.Printf("\n%s%sLogin URL:%s %s\n", CLI_COLOR.Bold, CLI_COLOR.Cyan, CLI_COLOR.Reset, fullURL)
-		fmt.Printf("\n%s%sℹ️  INSTRUCTIONS%s\n", CLI_COLOR.Bold, CLI_COLOR.Yellow, CLI_COLOR.Reset)
-		fmt.Printf("  1. Copy the URL above.\n")
-		fmt.Printf("  2. Press %s[ENTER]%s to start the servers.\n", CLI_COLOR.Bold, CLI_COLOR.Reset)
-		fmt.Printf("  3. Once started, paste the URL in your browser.\n")
 
-		fmt.Printf("\n%s%s(OpenList will start and you can request a username)%s\n", CLI_COLOR.Gray, CLI_COLOR.Bold, CLI_COLOR.Reset)
+		if err := auth.SetSingleUserPassword(newPassword); err != nil {
+			fmt.Printf("\n%s%s✗ Error: %v%s\n\n", CLI_COLOR.Bold, CLI_COLOR.Red, err, CLI_COLOR.Reset)
+			return false
+		}
 
-		fmt.Printf("\n%s➜ Press Enter to continue...%s", CLI_COLOR.Green, CLI_COLOR.Reset)
-		reader.ReadBytes('\n')
+		fmt.Printf("\n%s%s✓ Password updated. You can now login.%s\n\n", CLI_COLOR.Bold, CLI_COLOR.Green, CLI_COLOR.Reset)
+		return false
 
-		return true
 	case "help":
-		fmt.Println("Usage: ./app [genAdminToken|help]")
+		fmt.Printf("\n%s%sOpenList CLI%s\n", CLI_COLOR.Bold, CLI_COLOR.Cyan, CLI_COLOR.Reset)
+		fmt.Printf("%s──────────────────────────────%s\n", CLI_COLOR.Gray, CLI_COLOR.Reset)
+		fmt.Printf("  %shelp%s          Show this help\n", CLI_COLOR.Yellow, CLI_COLOR.Reset)
+		fmt.Printf("  %ssetPassword%s   Change the admin password\n", CLI_COLOR.Yellow, CLI_COLOR.Reset)
+		fmt.Printf("%s──────────────────────────────%s\n\n", CLI_COLOR.Gray, CLI_COLOR.Reset)
 		return false
 
 	default:
-		fmt.Printf("missing command: %s\n", cmd)
+		fmt.Printf("%s✗ Unknown command: %s%s\n", CLI_COLOR.Red, cmd, CLI_COLOR.Reset)
+		fmt.Printf("  Run %shelp%s for available commands.\n", CLI_COLOR.Yellow, CLI_COLOR.Reset)
 		return false
 	}
 }

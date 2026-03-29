@@ -2,10 +2,12 @@ package main
 
 import (
 	"OpenList/Go/cli"
-	"OpenList/Go/routes"
-	"OpenList/Go/sqlite"
+	routes "OpenList/Go/handler"
+	auth "OpenList/Go/service/auth"
+	"OpenList/Go/service/sqlite"
 	"OpenList/web"
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -16,6 +18,30 @@ import (
 	"github.com/joho/godotenv"
 )
 
+func printBanner(username, password string) {
+	line := "─────────────────────────────────────────────────────────"
+
+	fmt.Println()
+	fmt.Println(line)
+
+	fmt.Println(`
+   ____  ____  _______   ____    _______________
+  / __ \/ __ \/ ____/ | / / /   /  _/ ___/_  __/
+ / / / / /_/ / __/ /  |/ / /    / / \__ \ / /   
+/ /_/ / ____/ /___/ /|  / /____/ / ___/ // /    
+\____/_/   /_____/_/ |_/_____/___//____//_/     
+`)
+
+	fmt.Println(line)
+	fmt.Println("  FIRST TIME LOGIN DETECTED")
+	fmt.Println(line)
+	fmt.Printf("  ►  Username :  %s\n", username)
+	fmt.Printf("  ►  Password :  %s\n", password)
+	fmt.Println(line)
+	fmt.Println(" /!\\ Change this password immediately upon first login!")
+	fmt.Println(line)
+	fmt.Println()
+}
 func LoadEnv(filename string) error {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -42,7 +68,15 @@ func LoadEnv(filename string) error {
 func main() {
 	_ = godotenv.Load()
 
-	sqlite.InitDB(&sqlite.List{}, &sqlite.Item{}, &sqlite.AuthToken{})
+	sqlite.InitDB(&sqlite.List{}, &sqlite.Item{}, &sqlite.User{}, &sqlite.Session{})
+
+	created, username, password, err := auth.EnsureDefaultUser()
+	if err != nil {
+		log.Fatalf("failed to initialize default user: %v", err)
+	}
+	if created {
+		printBanner(username, password)
+	}
 
 	if len(os.Args) > 1 {
 		if !cli.HandleCLI() {
@@ -61,21 +95,27 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	//list Routes
-	router.GET("/api/list", routes.GetAllLists)
-	router.GET("/api/list/:idList", routes.GetListByID)
+	router.POST("/api/auth/login", routes.Login)
 
-	// List
-	router.POST("/api/list", routes.NewList)
-	router.DELETE("/api/list/:idList", routes.DeleteList)
+	authGroup := router.Group("/api")
+	authGroup.Use(routes.AuthRequired())
+	{
+		authGroup.GET("/auth/status", routes.AuthStatus)
+		authGroup.POST("/auth/logout", routes.Logout)
+		authGroup.POST("/auth/change-password", routes.ChangePassword)
 
-	// Item
-	router.POST("/api/item/:idList", routes.AddItem)
-	router.PUT("/api/item/:idList/:idItem", routes.ValidateItemID)
-	router.DELETE("/api/item/:idList/:idItem", routes.DeleteItem)
-
-	// Auth
-	router.POST("/api/auth/token", routes.GenrateAuthToken)
+		protected := authGroup.Group("/")
+		protected.Use(routes.MustChangePasswordGuard())
+		{
+			protected.GET("list", routes.GetAllLists)
+			protected.GET("list/:idList", routes.GetListByID)
+			protected.POST("list", routes.NewList)
+			protected.DELETE("list/:idList", routes.DeleteList)
+			protected.POST("item/:idList", routes.AddItem)
+			protected.PUT("item/:idList/:idItem", routes.ValidateItemID)
+			protected.DELETE("item/:idList/:idItem", routes.DeleteItem)
+		}
+	}
 
 	go func() {
 		port := os.Getenv("API_PORT")
@@ -84,7 +124,7 @@ func main() {
 		}
 		log.Println("Api run at : http://localhost:" + port)
 		if err := router.Run("localhost:" + port); err != nil {
-			log.Fatalf("Erreur serveur API: %v", err)
+			log.Fatalf("API server error: %v", err)
 		}
 	}()
 

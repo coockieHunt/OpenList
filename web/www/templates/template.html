@@ -1,0 +1,92 @@
+{{ define "header" }}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ if .PageName }}{{ .PageName }} - {{ end }}OpenList</title>
+
+    <link rel="stylesheet" href="/assets/css/pico.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/icon.css">
+
+    <script src="/core/api.js"></script>
+    <script src="/core/theme.js"></script>
+    <script src="/core/modal.js"></script>
+
+
+    <script>
+        window.ENV = {
+            API_URL: "{{ .ApiURL }}",
+            WEB_URL: "{{ .WebURL }}",
+            TOKEN_EXPIRATION_HOURS: "{{ .TokenExpirationHours }}",
+        };
+    </script>
+
+    {{ if .PageID }}
+        {{ $jsPath := printf "pages/%s.js" .PageID }}
+        
+        {{ if fileExists $jsPath }}
+            <script type="module" src="/{{ $jsPath }}"></script>
+        {{ end }}
+    {{ end }}
+</head>
+
+<header class="container">
+    <nav>
+        <ul>
+            <li>
+                <a href="/" style="font-size: 1.2rem; font-weight: bold; margin: 0; text-decoration: none; color: var(--pico-primary);">
+                    OpenList
+                </a>
+            </li>
+            {{ if .PageName }}
+                <li>
+                    <span style="opacity: 0.5; margin: 0 10px;"> > </span>
+                    <span style="font-weight: 600;">{{ .PageName }}</span>
+                </li>
+            {{ end }}
+        </ul>
+        <ul>
+            <li>
+                <span onclick="ChangeTheme()" class="icon icon-brightness-up" 
+                      style="width: 28px; height: 28px; cursor: pointer; color: var(--pico-text-color)" 
+                      id="theme-toggle">
+                </span> 
+            </li>
+            <li>
+                <a href="/settings" data-tooltip="Paramètres">
+                    <span class="icon icon-settings" style="width: 28px; height: 28px;"></span> 
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+{{ end }}
+
+
+{{ define "footer" }}
+<footer class="container" style="margin-top: 3rem; border-top: 1px solid var(--pico-muted-border-color); padding-top: 1.5rem; padding-bottom: 2rem;">
+    <div class="grid">
+        <div>
+            <small>
+                <strong>OpenList</strong> • 
+                <span data-tooltip="Langage Go & SQLite">Architecture légère</span>
+            </small>
+        </div>
+
+        <div style="text-align: center;">
+            <small>
+                <ins>v1.0.0</ins> 
+                <span style="color: #43a047; margin-left: 5px;">●</span> 
+                <span style="opacity: 0.6;">Stable</span>
+            </small>
+        </div>
+
+        <div style="text-align: right;">
+            <small>
+                <span>Propulsé par <strong>Go</strong></span><br>
+                <span>Créé par <a href="https://jonathangleyze.fr/" target="_blank" style="text-decoration: none;"><strong>Jonathan Gleyze</strong></a></span>
+            </small>
+        </div>
+    </div>
+</footer>
+{{ end }}

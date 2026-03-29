@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<body>
+    <main class="container">
+        {{ template "header" (dict "PageName" "Paramètres" "PageID" .PageID) }}
+
+        <section>
+            <hgroup>
+                <h2>À propos d'OpenList</h2>
+                <p>Une application ultra-légère de liste de courses.</p>
+            </hgroup>
+
+            <article>
+                <header><strong>Philosophie du projet</strong></header>
+                <p>
+                    Le but d'OpenList est d'offrir une gestion de listes performante en utilisant 
+                    le moins de ressources possible. L'application est optimisée pour la rapidité 
+                    et une empreinte disque minimale.
+                </p>
+                <footer>
+                    <small>Taille estimée de l'exécutable : ~10-15 Mo</small>
+                </footer>
+            </article>
+
+            <div class="grid">
+                <div>
+                    <h3>Stack Technique</h3>
+                    <ul>
+                        <li><strong>Backend :</strong> Go (Lang) pour l'API haute performance.</li>
+                        <li><strong>Serveur Web :</strong> Mini-serveur intégré en Go.</li>
+                        <li><strong>Base de données :</strong> SQLite (fichier local unique).</li>
+                        <li><strong>Frontend :</strong> HTML5 & Pico.css (Lightweight CSS).</li>
+                        <li><strong>Icônes :</strong> SVG optimisés de <a href="https://tabler.io/icons" target="_blank">Tabler Icons</a>.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3>Statistiques</h3>
+                    <label>Base de données : <ins>OpenList.db</ins></label>
+                    <label>Statut API : <mark>En ligne (:8080)</mark></label>
+                    <label>Interface : <mark>Active (:4000)</mark></label>
+                </div>
+            </div>
+        </section>
+
+        <article>
+            <header><strong>Compte</strong></header>
+            <p>Modifiez les informations d'accès à l'interface.</p>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: stretch;">
+                <a href="/change-password" role="button" class="secondary outline" style="display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; margin-bottom: 0;">Changer le mot de passe</a>
+                <button type="button" class="contrast outline" id="btn-logout" style="display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; margin-bottom: 0;">Se déconnecter</button>
+            </div>
+        </article>
+
+        <script>
+            document.getElementById('btn-logout').addEventListener('click', async () => {
+                await Logout();
+                window.location.href = '/login';
+            });
+        </script>
+
+        {{ template "footer" . }}
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr" data-theme="dark">
+	<script src="/components/ViewAll.js"></script>
+	<script src="/components/Table.js"></script>
+	<body>
+		<main class="container">
+			{{ template "header" (dict "PageName" "Accueil" "PageID" .PageID) }}
+
+			<article>
+				<header
+					style="
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+					"
+				>
+					<hgroup style="margin: 0">
+						<h5 style="margin: 0">Mes Listes</h5>
+						<small><span id="response-count">0</span> Liste</small>
+					</hgroup>
+					<hgroup style="margin: 0">
+						<button
+							class="outline"
+							data-tooltip="Rafraîchir la liste"
+							onclick="refreshList()"
+							style="
+								border: none;
+								padding: 0;
+								margin: 0;
+								width: auto;
+								background: transparent;
+							"
+						>
+							<span
+								class="icon icon-reload"
+								style="width: 30px; height: 30px"
+							></span>
+						</button>
+						<a href="/addList" style="color: var(--pico-primary)"
+							>créer une liste</a
+						>
+					</hgroup>
+				</header>
+
+				<div id="list-container" class="list">
+					<p aria-busy="true">Chargement...</p>
+				</div>
+
+				<footer>
+					<small>Response: <span id="response-time">0ms</span></small>
+				</footer>
+			</article>
+
+			{{ template "footer" . }}
+		</main>
+	</body>
+</html>

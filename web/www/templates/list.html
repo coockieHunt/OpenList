@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr" data-theme="dark">
+	<body>
+		<main class="container">
+			{{ template "header" (dict "PageName" "Ma Liste" "PageID" .PageID) }}
+
+			<div id="item-container" class="list">
+				<p aria-busy="true">Chargement...</p>
+			</div>
+
+			<article>
+                <div role="group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button 
+						type="button" 
+						id="btn-add-item"
+					>
+                        ➕ Ajouter
+                    </button>
+                    <button
+                        type="button"
+                        class="secondary"
+                        id="btn-delete-list"
+                    >
+                        🗑️ Supprimer la liste
+                    </button>
+                </div>
+			</article>
+
+			{{ template "footer" . }}
+		</main>
+	</body>
+</html>
